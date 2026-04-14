@@ -1,8 +1,6 @@
 import psycopg2
 import psycopg2.extras
-import os
-import datetime
-from .logger import log, log_error
+from .logger import log_error
 
 class PostgresDB:
 
