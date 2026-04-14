@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Action Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <h1>{{ action }}</h1>
+
+    {% if specimen_id %}
+    <p><strong>Specimen ID:</strong> {{ specimen_id }}</p>
+    {% endif %}
+
+    {% if test_type %}
+    <p><strong>Test Type:</strong> {{ test_type }}</p>
+    {% endif %}
+
+    {% if zpl %}
+    <h3>ZPL Sent</h3>
+    <pre>{{ zpl }}</pre>
+    {% endif %}
+
+    <h3>Result</h3>
+    <pre>{{ result | tojson(indent=2) }}</pre>
+
+    <a href="{{ url_for('index') }}">Back to dashboard</a>
+</body>
+
+</html>

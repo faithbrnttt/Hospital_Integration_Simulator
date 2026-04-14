@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Hospital Integration Simulator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <h1>Hospital Integration Simulator</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div>
+        {% for category, message in messages %}
+        <p><strong>{{ category|capitalize }}:</strong> {{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <section>
+        <h2>Actions</h2>
+
+        <form method="POST" action="{{ url_for('scan') }}">
+            <button type="submit">Scan Specimen</button>
+        </form>
+
+        <form method="POST" action="{{ url_for('run_test') }}">
+            <input type="text" name="specimen_id" placeholder="Specimen ID">
+            <select name="test_type">
+                <option value="CBC">CBC</option>
+                <option value="CMP">CMP</option>
+            </select>
+            <button type="submit">Run Test</button>
+        </form>
+
+        <form method="POST" action="{{ url_for('print_label') }}">
+            <textarea name="zpl" rows="6" cols="60" placeholder="Enter ZPL here"></textarea>
+            <br>
+            <button type="submit">Print Custom Label</button>
+        </form>
+
+        <form method="POST" action="{{ url_for('test_print') }}">
+            <button type="submit">Test Print</button>
+        </form>
+
+        <form method="POST" action="{{ url_for('workflow') }}">
+            <button type="submit">Run Full Workflow</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Printer Settings</h2>
+        <pre>{{ printer_settings | tojson(indent=2) }}</pre>
+    </section>
+
+    <section>
+        <h2>Scanner Settings</h2>
+        <pre>{{ scanner_settings | tojson(indent=2) }}</pre>
+    </section>
+
+    <section>
+        <h2>Analyzer Settings</h2>
+        <pre>{{ analyzer_settings | tojson(indent=2) }}</pre>
+    </section>
+
+    <section>
+        <h2>Device Status</h2>
+        <pre>{{ device_status | tojson(indent=2) }}</pre>
+    </section>
+</body>
+
+</html>
