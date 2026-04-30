@@ -4,6 +4,7 @@
 <head>
     <title>Hospital Integration Simulator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -19,55 +20,69 @@
     {% endif %}
     {% endwith %}
 
-    <section>
+    <section class="actions">
         <h2>Actions</h2>
 
-        <form method="POST" action="{{ url_for('scan') }}">
-            <button type="submit">Scan Specimen</button>
-        </form>
-
-        <form method="POST" action="{{ url_for('run_test') }}">
-            <input type="text" name="specimen_id" placeholder="Specimen ID">
-            <select name="test_type">
-                <option value="CBC">CBC</option>
-                <option value="CMP">CMP</option>
-            </select>
-            <button type="submit">Run Test</button>
-        </form>
-
-        <form method="POST" action="{{ url_for('print_label') }}">
-            <textarea name="zpl" rows="6" cols="60" placeholder="Enter ZPL here"></textarea>
-            <br>
-            <button type="submit">Print Custom Label</button>
-        </form>
-
-        <form method="POST" action="{{ url_for('test_print') }}">
-            <button type="submit">Test Print</button>
-        </form>
-
         <form method="POST" action="{{ url_for('workflow') }}">
-            <button type="submit">Run Full Workflow</button>
+            <input type="text" name="specimen_id" placeholder="Specimen ID" value="{{  specimen_id or '' }}">
+            <select name="test_type">
+                <option value="CBC" {% if test_type=="CBC" %}selected{% endif %}>CBC</option>
+                <option value="CMP" {% if test_type=="CMP" %}selected{% endif %}>CMP</option>
+            </select>
+            <button type="submit">Run Lab Workflow</button>
         </form>
+
+
     </section>
 
-    <section>
-        <h2>Printer Settings</h2>
-        <pre>{{ printer_settings | tojson(indent=2) }}</pre>
-    </section>
+    <section class="setting-card-container">
+        <div class="settings-card">
+            <h3>Printer Settings</h3>
 
-    <section>
-        <h2>Scanner Settings</h2>
-        <pre>{{ scanner_settings | tojson(indent=2) }}</pre>
-    </section>
+            <div class="settings-list">
+                {% for key, value in printer_settings.items() %}
+                <div class="setting-row">
+                    <span class="setting-key">ID: {{ key.replace('_', ' ').title() }}</span>
+                    <span class="setting-value">Name: {{ value.deviceName }}</span>
+                    <span class="setting-value">Location: {{ value.location }}</span>
+                    <span class="setting-value">Model: {{ value.model }}</span>
+                    <span class="setting-value">Status: {{ value.status }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
 
-    <section>
-        <h2>Analyzer Settings</h2>
-        <pre>{{ analyzer_settings | tojson(indent=2) }}</pre>
-    </section>
+        <div class="settings-card">
+            <h3>Scanner Settings</h3>
 
-    <section>
-        <h2>Device Status</h2>
-        <pre>{{ device_status | tojson(indent=2) }}</pre>
+            <div class="settings-list">
+                {% for key, value in scanner_settings.items() %}
+                <div class="setting-row">
+                    <span class="setting-key">ID: {{ key.replace('_', ' ').title() }}</span>
+                    <span class="setting-value">Name: {{ value.deviceName }}</span>
+                    <span class="setting-value">Location: {{ value.location }}</span>
+                    <span class="setting-value">Model: {{ value.model }}</span>
+                    <span class="setting-value">Status: {{ value.status }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <h3>Analyzer Settings</h3>
+
+            <div class="settings-list">
+                {% for key, value in analyzer_settings.items() %}
+                <div class="setting-row">
+                    <span class="setting-key">ID: {{ key.replace('_', ' ').title() }}</span>
+                    <span class="setting-value">Name: {{ value.deviceName }}</span>
+                    <span class="setting-value">Location: {{ value.location }}</span>
+                    <span class="setting-value">Model: {{ value.model }}</span>
+                    <span class="setting-value">Status: {{ value.status }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </section>
 </body>
 

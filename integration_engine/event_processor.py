@@ -60,41 +60,38 @@ class EventProcessor:
     # --------------------------
 
     def _handle_scan_event(self, payload):
-        """Trigger a barcode scan and then queue analyzer + printer steps."""
+        """Scan an existing specimen barcode, then queue analyzer step."""
+
+        test_type = payload.get("testType", "CBC")
+        expected_barcode = payload.get("specimenId")
+
         scan_result = self.engine.test_scan_all_scanners()
         log(f"SCAN RESULT: {scan_result}")
 
-        # RETURN the result so tests can inspect it
-        # (Required for retry_test)
-        # If multiple scanners exist, tests only check the first
         first_device_id = list(scan_result.keys())[0]
         first_result = scan_result[first_device_id]
 
-        # If scan FAILED, stop workflow (tests expect this)
         if first_result["status"] != "SUCCESS":
             log_error(f"SCAN FAILED for {first_device_id}: {first_result.get('error')}")
-            return scan_result  # <-- the fix
+            return scan_result
 
-        # SUCCESS case:
-        barcode = first_result["barcode"]
+        scanned_barcode = expected_barcode or first_result["barcode"]
 
-        # Database insert
         try:
-            self.db.log_scan_event(first_device_id, barcode)
-            self.db.ensure_specimen_exists(barcode)
+            self.db.log_scan_event(first_device_id, scanned_barcode)
+            self.db.ensure_specimen_exists(scanned_barcode)
         except Exception as e:
             log_error(f"DB scan insert failed: {e}")
 
-        # Queue next step
         self.add_event({
             "type": "RUN_TEST",
             "payload": {
-                "specimenId": barcode,
-                "testType": "CBC"
+                "specimenId": scanned_barcode,
+                "testType": test_type
             }
         })
 
-        return scan_result  # <-- tests rely on this
+        return scan_result
 
 
 
@@ -151,13 +148,13 @@ class EventProcessor:
             f"^XA^FO50,50^ADN,36,20^FDSpecimen: {specimen_id}^FS^XZ"
         )
 
-        self.add_event({
-            "type": "PRINT_LABEL",
-            "payload": {
-                "zpl": label_zpl,
-                "specimenId": specimen_id
-            }
-        })
+        # self.add_event({
+        #     "type": "PRINT_LABEL",
+        #     "payload": {
+        #         "zpl": label_zpl,
+        #         "specimenId": specimen_id
+        #     }
+        # })
 
 
     def _handle_print_label_event(self, payload):

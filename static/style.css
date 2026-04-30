@@ -1,0 +1,67 @@
+.settings-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  width: 400px;
+  text-align: center;
+  padding: 1rem;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.settings-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.settings-header span {
+  font-size: 0.75rem;
+  color: #6b7280;
+  background: #e5e7eb;
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.settings-json {
+  margin: 0;
+  padding: 20px;
+  background: #0f172a;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.setting-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.setting-card-container {
+  display: flex;
+  gap: 1rem;
+}
+
+body {
+  padding: 5rem;
+}
+
+section,
+h1 {
+  padding-bottom: 2rem;
+}
+
+form {
+  margin-block: 10px;
+}

@@ -5,6 +5,7 @@ import os
 from .event_processor import EventProcessor
 from .postgres_db import PostgresDB
 from .etl_processor import ETLProcessor
+import random
 
 
 class IntegrationEngine:
@@ -39,7 +40,8 @@ class IntegrationEngine:
     def get_printers(self):
         return [d for d in self.devices.values() if d.type == "printer"]
 
-
+    def generate_specimen_barcode(self):
+        return f"LAB{random.randint(1000000000, 9999999999)}"
 
     def get_all_printer_settings(self):
         results = {}

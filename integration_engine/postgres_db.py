@@ -88,6 +88,20 @@ class PostgresDB:
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             """)
+        
+        #CMP normalization
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS cmp_results (
+                id SERIAL PRIMARY KEY,
+                specimen_barcode TEXT,
+                analyzer_id TEXT,
+                cal NUMERIC,
+                pot NUMERIC,
+                sod NUMERIC,
+                result_time TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            """)
 
         self.conn.commit()
         cur.close()
@@ -109,7 +123,7 @@ class PostgresDB:
                 plt,
                 result_time
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s);
+            VALUES (%s, %s, %s, %s, %s, %s, COALESCE(%s, CURRENT_TIMESTAMP));
         """, (
             specimen_barcode,
             analyzer_id,
@@ -122,8 +136,32 @@ class PostgresDB:
 
         self.conn.commit()
         cur.close()
+    
+    def insert_cmp_result(self, specimen_barcode, analyzer_id, result_json, result_time):
+        cur = self.conn.cursor()
 
+        cur.execute("""
+            INSERT INTO cmp_results (
+                specimen_barcode,
+                analyzer_id,
+                cal,
+                pot,
+                sod,
+                result_time
+            )
+            VALUES (%s, %s, %s, %s, %s, COALESCE(%s, CURRENT_TIMESTAMP));
+        """, (
+            specimen_barcode,
+            analyzer_id,
+            result_json.get("CAL") or result_json.get("Calcium"),
+            result_json.get("POT") or result_json.get("Potassium"),
+            result_json.get("SOD") or result_json.get("Sodium"),
+            result_time
+        ))
 
+        self.conn.commit()
+        cur.close()
+        
     def ensure_specimen_exists(self, barcode):
         cur = self.conn.cursor()
         cur.execute("""
